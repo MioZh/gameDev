@@ -1,7 +1,12 @@
 import pygame
-from start_field import starting_fields
+import webbrowser
+from game.start_field import starting_fields
+from modl.model import off_on_song, music_playing
 
-def start_backraund():
+def open_webpage():
+    webbrowser.open('https://www.iloveimg.com/ru/download/x8h9dqbywm31cbx11b2d8lnkk0rqkssbswzqq7k88qmybzf9jqp1Amn5ntbdgmfqrybrcApshbgg5dknb116xnAlfsj20srnsjqAnb5mj2fr2xpbym02qtApy7wb3b6315kq65x04kqfy5g1fx8sAsn1b1lkrl5jxk0b7ntmn05fdb2cqtzq/5')  
+
+def start_backraund(button_sound):
     pygame.init()
 
     WIDTH, HEIGHT = 800, 600
@@ -15,15 +20,26 @@ def start_backraund():
     backgraund = pygame.image.load('image/start_backgraund.jpg')
     backgraund = pygame.transform.scale(backgraund, (800, 600))
 
-    button = pygame.image.load('pict/but_l.png')
+    button = pygame.image.load('image/but_l.png')
     button = pygame.transform.scale(button, (180, 80))
 
-    little_button = pygame.image.load('pict/but_q.png')
+    song_on = pygame.image.load('image/song_on.png')
+    song_on = pygame.transform.scale(song_on, (35, 35))
+
+    song_off = pygame.image.load('image/song_off.png')
+    song_off = pygame.transform.scale(song_off, (35, 35))
+
+    document_icon = pygame.image.load('image/document_icon.png')
+    document_icon = pygame.transform.scale(document_icon, (35, 35))
+
+    song_image = song_on
+
+    little_button = pygame.image.load('image/but_q.png')
     little_button = pygame.transform.scale(little_button, (80, 80))
 
     button_rect_start = button.get_rect()
     button_rect_start.center = (WIDTH // 2, 200)
-
+    
     button_rect_record = button.get_rect()
     button_rect_record.center = (WIDTH // 2, 290)
 
@@ -53,15 +69,31 @@ def start_backraund():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if 315 <= event.pos[0] <= 480 and 165 <= event.pos[1] <= 230:
+                    button_sound.play()
+                    if music_playing % 2 == 1 or music_playing == 0:
+                        pygame.mixer.music.pause()
                     starting_fields()
+                    if music_playing % 2 == 1 or music_playing == 0:
+                        pygame.mixer.music.unpause()
                 if 315 <= event.pos[0] <= 480 and 260 <= event.pos[1] <= 320:
+                    button_sound.play()
                     print("record")
+
                 if 315 <= event.pos[0] <= 480 and 350 <= event.pos[1] <= 410:
+                    button_sound.play()
                     return False
+                
                 if 25 <= event.pos[0] <= 95 and 505 <= event.pos[1] <= 570:
-                    print("song")
+                    button_sound.play()
+                    off_on_song()
+                    if song_image == song_off:
+                        song_image = song_on
+                    else:
+                        song_image = song_off
+
                 if 115 <= event.pos[0] <= 185 and 505 <= event.pos[1] <= 570:
-                    print("const")
+                    button_sound.play()
+                    open_webpage()
 
         screen.blit(backgraund, (0, 0))
         screen.blit(button, button_rect_start)
@@ -75,6 +107,9 @@ def start_backraund():
 
         screen.blit(little_button, (20, 500))
         screen.blit(little_button, (110, 500))
+
+        screen.blit(song_image, (45, 520))
+        screen.blit(document_icon, (135, 520))
 
         pygame.display.flip()
         

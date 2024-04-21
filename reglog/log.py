@@ -1,8 +1,8 @@
 import pygame 
-from db import check_credentials
-from start import start_backraund
+from modl.db import check_credentials
+from game.start import start_backraund
 
-def log():
+def log(button_sound):
     pygame.init()
 
     SCREEN_WIDTH = 800
@@ -17,7 +17,7 @@ def log():
     background_image = pygame.transform.scale(background_image, (800, 600))
     background_rect = background_image.get_rect()
 
-    original_image = pygame.image.load('pict/but_l.png')
+    original_image = pygame.image.load('image/but_l.png')
     # Resize image
     button_image = pygame.transform.scale(original_image, (180, 80))
 
@@ -61,13 +61,15 @@ def log():
                 if 320 <= event.pos[0] <= 585 and 225 <= event.pos[1] <= 290:
                     input_active = "password"
                 if 205 <= event.pos[0] <= 375 and 345 <= event.pos[1] <= 410:
+                    button_sound.play()
                     return True
                 if 415 <= event.pos[0] <= 580 and 345 <= event.pos[1] <= 410 and len(input_username) > 2 and len(input_password) > 5:
                     if check_credentials(input_username, input_password):
+                        button_sound.play()
                         input_username = ""
                         input_password = ""
                         input_active = ""
-                        start_backraund()
+                        start_backraund(button_sound)
                         return True
                     else:
                         # Error image blit

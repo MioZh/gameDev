@@ -1,7 +1,8 @@
 import pygame
 import sys
-from field_of_dreams import start_Field_of_Dreams
-from labyrinth import start_labyrinth
+from game.field_of_dreams import start_Field_of_Dreams
+from game.labyrinth import start_labyrinth
+from game.pacman import start_pacman
 
 # Инициализация Pygame
 def starting_fields():
@@ -12,19 +13,30 @@ def starting_fields():
     # Цвета
     WHITE = (255, 255, 255)
 
+
+    music_file = "song/step_tyler.mp3"  # Путь к музыке
+    step_sound = pygame.mixer.Sound(music_file)
+    
+
     font_bold = pygame.font.Font("fonts/press.ttf", 18)
+    font_bold_little = pygame.font.Font("fonts/press.ttf", 14)
+
+    text_mess = "In the deep laboratories, scientist \nTyler Chronos and his colleagues \nworked on an experimental time \nmachine. They sought to create \na device with which they could \ntravel through time. Despite the \nwarnings and suggestions, Tyler was \nconvinced of the success of his \nproject. One day, when they \nintroduced the time machine, \nsomething went wrong. A sudden \nglitch took Tyler out of time and \nspace, leaving him in a time \nlabyrinth."
+    font_bold.render(text_mess, True, (255, 255, 255))
+
+    start_steps = False
 
     # Создание окна
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Анимация ходьбы")
 
-    backgraund = pygame.image.load('pict/backgraund.jpg')
+    backgraund = pygame.image.load('image/backgraund.jpg')
     backgraund = pygame.transform.scale(backgraund, (800, 600))
 
-    mess_backgraund = pygame.image.load('pict/mess_start.png')
+    mess_backgraund = pygame.image.load('image/mess_start.png')
     mess_backgraund = pygame.transform.scale(mess_backgraund, (800, 600))
 
-    cont_text = font_bold.render("Continue", True, (255, 255, 255))  # White color
+    cont_text = font_bold.render("Continue", True, WHITE)
 
     # Загрузка изображений для анимации ходьбы
     walk_images_left = [pygame.image.load('player/left_a.png'),
@@ -71,15 +83,27 @@ def starting_fields():
         if not begin:
             screen.blit(mess_backgraund, (0, 0))
             screen.blit(cont_text, (450, 500))
+            lines_gg = text_mess.split('\n')
+            posi_y = 75
+            for line in lines_gg:
+                gg_txt_block = font_bold_little.render(line, True, WHITE)
+                screen.blit(gg_txt_block, (130, posi_y))
+                posi_y +=20
+            start_steps = True
         if begin:
+            if start_steps:
+                step_sound.play(-1)
+                start_steps = False
             # Достижение цели и изменение направление
-            if y == 460: 
+            if y == 460:
                 walk_images = walk_images_left
                 up_step = False
                 left_step = True
                 
             if x == 244:
+                step_sound.stop()
                 start_labyrinth()
+                step_sound.play(-1)
                 walk_images = walk_images_up
                 left_step = False
                 up_step = True
@@ -96,7 +120,9 @@ def starting_fields():
                 up_step = True
 
             if y == 248:
-                start_Field_of_Dreams()
+                step_sound.stop()
+                start_pacman()
+                step_sound.play(-1)
                 x, y = 640, 130
             
             if y == 74:
@@ -110,8 +136,11 @@ def starting_fields():
                 up_step = True
 
             if y == 50:
-                return True
+                step_sound.stop()
+                start_Field_of_Dreams()
                 up_step = False
+                return True
+                
 
 
             # Обновляем текущий кадр анимации
@@ -142,4 +171,3 @@ def starting_fields():
     # Завершение работы Pygame
     pygame.quit()
     sys.exit()
-

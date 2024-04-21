@@ -2,8 +2,8 @@ import pygame
 import sys
 import random
 import time
-from db import get_quetion
-from model import check_letter, check_letter_in_list, remote_letter
+from modl.db import get_quetion
+from modl.model import check_letter, check_letter_in_list, remote_letter
 
 
 def start_Field_of_Dreams():
@@ -21,6 +21,7 @@ def start_Field_of_Dreams():
 
     font_bold = pygame.font.Font("fonts/press.ttf", 18)
     font_bold_little = pygame.font.Font("fonts/press.ttf", 8)
+    font_bold_no = pygame.font.Font("fonts/press.ttf", 14)
 
     # Создание экрана
     screen = pygame.display.set_mode((screen_width, screen_height))
@@ -53,6 +54,11 @@ def start_Field_of_Dreams():
     message_gg_back = pygame.transform.scale(message_back, (200, 100))
     message_gg_back = pygame.transform.flip(message_gg_back, True, False)
     
+    mess_backgraund = pygame.image.load('image/mess_game.png')
+    mess_backgraund = pygame.transform.scale(mess_backgraund, (800, 600))
+
+    cont_text = font_bold.render("Continue", True, BLACK)
+
 
     # Размеры клетки
     cell_width = game_area_width // 16  # Делим на 16 для 16 клеток в строке
@@ -62,6 +68,7 @@ def start_Field_of_Dreams():
     # Генерация случайного числа от 1 до 20
     randomNum = random.randint(1, 20)
     quetion = get_quetion(randomNum)
+    print(quetion)
     length = len(quetion[2])
     word = quetion[2]
 
@@ -95,7 +102,12 @@ def start_Field_of_Dreams():
     # Создание сетки клеток
     grid = create_grid()
 
+    start_game = False
+    text_mess = "You have successfully overcome all \ndifficulties and reached the last \nstage - the field of miracles! Now you \nhave your final test. You are only \nallowed 5 mistakes, if you make more \nyou will lose. Try not to make too \nmany mistakes and end the game with \na victory!"
+
+
     cnt_word = (16 - length) // 2  # Изменено на 16
+
 
     list_letter = []
     # Основной игровой цикл
@@ -105,8 +117,17 @@ def start_Field_of_Dreams():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and not start_game:
+                if 530 <= event.pos[0] <= 675 and 395 <= event.pos [1] <= 420:
+                    if quit_game == 1:
+                        return True
+                    elif quit_game == 2:
+                        return False
+                    else:
+                        start_game = True
+
             elif event.type == pygame.KEYDOWN:
-                if event.key >= pygame.K_a and event.key <= pygame.K_z and cnt_word <= length+(16 - length) // 2:
+                if event.key >= pygame.K_a and event.key <= pygame.K_z and cnt_word <= length+(16 - length) // 2 and start_game:
                     # Обновляем текст в синем блоке
                     letter = chr(event.key).lower()
                     list_gg_txt = [f"Maybe letter {letter.upper()}?", f"Next letter is {letter.upper()}.", f"I choose letter {letter.upper()}.", f"Let's check if \nthere is letter {letter.upper()}."]
@@ -131,10 +152,10 @@ def start_Field_of_Dreams():
                             edit_txt = f"You didn't guess, \nyou have only {attempt} \nattempts left."
                         elif attempt == 1:
                             edit_txt = f"You lost, the word was \n{word.upper()}."
-                            quit_game = 1
+                            quit_game = 2
                     if not word:
                         edit_txt = "Congratulations, \nyou guessed \nthe word correctly!!"
-                        quit_game = 2
+                        quit_game = 1
                         
 
         # Заливка фона
@@ -158,34 +179,45 @@ def start_Field_of_Dreams():
         screen.blit(quetion_back, (0, 10))
         screen.blit(quetion_table, quetion_rect)
 
-        screen.blit(message_gg_back, (180, 370))
-        screen.blit(message_back, (400, 360))
+        if start_game:
+            screen.blit(message_gg_back, (180, 370))
+            screen.blit(message_back, (400, 360))
 
-        # ответы героя
-        lines_gg = gg_txt.split('\n')
-        posi_y = 420
-        for line in lines_gg:
-            gg_txt_block = font_bold_little.render(line, True, BLACK)
-            screen.blit(gg_txt_block, (200, posi_y))
-            posi_y +=15
+            # ответы героя
+            lines_gg = gg_txt.split('\n')
+            posi_y = 420
+            for line in lines_gg:
+                gg_txt_block = font_bold_little.render(line, True, BLACK)
+                screen.blit(gg_txt_block, (200, posi_y))
+                posi_y +=15
 
-        # ответы ведущего
-        lines = edit_txt.split('\n')
-        pos_y = 420
-        for line in lines:
-            edit_txt_block = font_bold_little.render(line, True, BLACK)
-            screen.blit(edit_txt_block, (430, pos_y))
-            pos_y +=15
+            # ответы ведущего
+            lines = edit_txt.split('\n')
+            pos_y = 420
+            for line in lines:
+                edit_txt_block = font_bold_little.render(line, True, BLACK)
+                screen.blit(edit_txt_block, (430, pos_y))
+                pos_y +=15
         
-        
+        if not start_game:
+            screen.blit(mess_backgraund, (0, -25))
+            screen.blit(cont_text, (530, 400))
+            lines_gg = text_mess.split('\n')
+            posi_y = 180
+            for line in lines_gg:
+                gg_txt_block = font_bold_no.render(line, True, BLACK)
+                screen.blit(gg_txt_block, (130, posi_y))
+                posi_y +=20
         # Обновление экрана
         pygame.display.flip()
-        if quit_game == 1:
+        if quit_game == 1 and start_game:
+            text_mess = "Congratulations! You have successfully \nhelped our hero return to their time.\nYour efforts and perseverance were \ninvaluable.Now, they can continue their \nadventure, inspired by your assistance.\nBut remember, the world is full of many \nmore mysteries and challenges.Please, \ndon't forget to come back and explore \nnew horizons with us!"
             time.sleep(3)
-            return False
-        elif quit_game == 2:
+            start_game = False
+        elif quit_game == 2 and start_game:
+            text_mess = "Don't get upset, it's just a game.You've \nput in a lot of effort, but sometimes \neven the best players make mistakes.Try \nagain and remember that every failure \nbrings you closer to the next victory!\nBelieve in yourself and don't give up!"
             time.sleep(3)
-            return True
+            start_game = False
     # Выход из Pygame
     pygame.quit()
     sys.exit()

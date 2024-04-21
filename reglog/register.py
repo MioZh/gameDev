@@ -1,9 +1,9 @@
 import pygame 
-from db import register_user
-from start import start_backraund
-from model import check_password_and_login
+from modl.db import register_user
+from game.start import start_backraund
+from modl.model import check_password_and_login
 
-def register():
+def register(button_sound):
     pygame.init()
 
     SCREEN_WIDTH = 800
@@ -32,7 +32,7 @@ def register():
     background_image = pygame.transform.scale(background_image, (800, 600))
     background_rect = background_image.get_rect()
 
-    original_image = pygame.image.load('pict/but_l.png')
+    original_image = pygame.image.load('image/but_l.png')
     button_image = pygame.transform.scale(original_image, (180, 80))
 
     pass_name_image = pygame.image.load('image/pass_name.png')
@@ -87,13 +87,15 @@ def register():
                 if 320 <= event.pos[0] <= 585 and 225 <= event.pos[1] <= 290:
                     input_active = "password"
                 if 205 <= event.pos[0] <= 375 and 345 <= event.pos[1] <= 410:
+                    button_sound.play()
                     return True
                 if 415 <= event.pos[0] <= 580 and 345 <= event.pos[1] <= 410 and check_password_and_login(input_username, input_password):
                     if register_user(input_username, input_password):
+                        button_sound.play()
                         input_username = ""
                         input_password = ""
                         input_active = ""
-                        start_backraund()
+                        start_backraund(button_sound)
                         return True
                     else:
                         # Error image blit

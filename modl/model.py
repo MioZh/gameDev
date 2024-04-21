@@ -1,3 +1,19 @@
+import pygame 
+music_playing = 0
+
+def off_on_song():
+    global music_playing
+    if music_playing == 0:
+        music_file = "song/music-backgraund_eISPYRiE.mp3"  # Путь к музыке
+        pygame.mixer.music.load(music_file)
+        pygame.mixer.music.play(-1)
+    elif music_playing % 2 == 0:
+        pygame.mixer.music.unpause()
+    else:
+        pygame.mixer.music.pause()
+    music_playing += 1
+
+
 def check_password_and_login(username, password):
     if len(username) > 2 and len(password) > 5:
         letter_count = 0
@@ -29,3 +45,4 @@ def check_letter_in_list(letter, list_let):
         return True
     return False
     
+
