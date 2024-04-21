@@ -76,7 +76,7 @@ def reset_game():
         end_col = len(grid[0]) - 1
 
     grid[start_row][start_col] = 2  # 2 - старт
-    grid[end_row][end_col] = 3  # 3 - конец
+    grid[end_row][end_col] = 1  # 3 - конец
 
     available_cells = []
     for row in range(len(grid)):
@@ -106,6 +106,8 @@ def start_labyrinth():
     font_bold = pygame.font.Font("fonts/press.ttf", 18)
     font_bold_little = pygame.font.Font("fonts/press.ttf", 14)
 
+    coins_song = "song/coins_song.mp3"
+    coins_song = pygame.mixer.Sound(coins_song)
 
     # Установка размеров экрана
     WINDOW_SIZE = [(WIDTH + MARGIN) * 25 + MARGIN, (HEIGHT + MARGIN) * 25 + MARGIN]
@@ -117,7 +119,7 @@ def start_labyrinth():
 
     cont_text = font_bold.render("Continue", True, BLACK)
 
-    text_mess = "Here's the first challenge: you need to collect all the coins, only then will the doors leading to the next level open. I wish you good luck!"
+    text_mess = "Here's the first challenge: you need to \ncollect all the coins, only then will \nthe doors leading to the next level \nopen. I wish you good luck!"
 
     # Установка заголовка окна
     pygame.display.set_caption("Return to Present")
@@ -161,7 +163,8 @@ def start_labyrinth():
         for coin_row, coin_col in coins:
             if player_pos == [coin_row, coin_col]:
                 coins_to_remove.append((coin_row, coin_col))
-                coin += 1 # Устанавливаем состояние показа уведомления
+                coins_song.play()
+                coin += 1 
 
 
         for coin_row, coin_col in coins_to_remove:
@@ -180,7 +183,8 @@ def start_labyrinth():
             timer += 1 
                 
         
-            
+        if coin == 15:
+            grid[end_row][end_col] = 3
 
         # Отрисовка лабиринта, персонажа и золотых монеток
         screen.fill(BLACK)
@@ -191,10 +195,7 @@ def start_labyrinth():
                 elif grid[row][column] == 2:
                     color = RED
                 elif grid[row][column] == 3:
-                    if coin != 15:
-                        color = WHITE
-                    else:
-                        color = GREEN
+                    color = GREEN
                 else:
                     color = BLACK
                 pygame.draw.rect(screen, color, [(MARGIN + WIDTH) * column + MARGIN,

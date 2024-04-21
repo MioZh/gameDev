@@ -88,9 +88,12 @@ def start_backraund(button_sound):
                 
                 if 25 <= event.pos[0] <= 95 and 505 <= event.pos[1] <= 570:
                     button_sound.play()
-                    if song_image == song_off and not normal_song:
-                        song_image = song_on
+                    if not normal_song:
                         song_normal()
+                        normal_song = True
+                    if song_image == song_off:
+                        song_image = song_on
+                        off_on_song()
                     else:
                         song_image = song_off
                         off_on_song()

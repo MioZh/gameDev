@@ -79,7 +79,6 @@ def start_Field_of_Dreams():
     # Генерация случайного числа от 1 до 20
     randomNum = random.randint(1, 20)
     quetion = get_quetion(randomNum)
-    print(quetion)
     length = len(quetion[2])
     word = quetion[2]
 
@@ -234,7 +233,7 @@ def start_Field_of_Dreams():
             time.sleep(3)
             start_game = False
         elif quit_game == 2 and start_game:
-            text_mess = ""
+            text_mess = "What a pity, the last challenge wasn't \neasy, so I understand you... Don't be \nupset. New challenges are an \nopportunity to become even stronger \nand smarter. I'm sure someday you'll \nhelp Tyler return to the present \ntime and complete his adventure. Your \nsupport and ability to overcome \nobstacles are what makes you a true hero!"
             time.sleep(3)
             start_game = False
     # Выход из Pygame

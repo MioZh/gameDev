@@ -24,17 +24,17 @@ def start_pacman():
     time = 0
     start_game = False
 
-    mess_backgraund = pygame.image.load('game/image/mess_game.png')
+    mess_backgraund = pygame.image.load('image/mess_game.png')
     mess_backgraund = pygame.transform.scale(mess_backgraund, (800, 600))
 
-    font_bold = pygame.font.Font("game/fonts/press.ttf", 18)
-    font_bold_little = pygame.font.Font("game/fonts/press.ttf", 14)
+    font_bold = pygame.font.Font("fonts/press.ttf", 18)
+    font_bold_little = pygame.font.Font("fonts/press.ttf", 14)
 
     cont_text = font_bold.render("Continue", True, BLACK)
 
     text_mess = "You coped very well with the maze, but \nnow it's time for a new challenge. Will \nyou be able to collect all the coins \nwhile running away from enemies? This \nwill be a real test of your skills and \nreaction speed."
 
-    player = Player(32,128,"images_pacman/player.png")
+    player = Player(32,128,"game/images_pacman/player.png")
     # Create the blocks that will set the paths where the player can go
     horizontal_blocks = pygame.sprite.Group()
     vertical_blocks = pygame.sprite.Group()
@@ -60,8 +60,8 @@ def start_pacman():
     enemies.add(Slime(448,64,-2,0))
     enemies.add(Slime(640,448,2,0))
     
-    game_over_sound = pygame.mixer.Sound("audio_pacman/game_over_sound.mp3")
-    win_sound = pygame.mixer.Sound("audio_pacman/win_sound.mp3")
+    game_over_sound = pygame.mixer.Sound("game/audio_pacman/game_over_sound.mp3")
+    win_sound = pygame.mixer.Sound("game/audio_pacman/win_sound.mp3")
 
     the_end_game = 0
 
