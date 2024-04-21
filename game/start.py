@@ -1,7 +1,7 @@
 import pygame
 import webbrowser
 from game.start_field import starting_fields
-from modl.model import off_on_song, music_playing
+from modl.model import off_on_song, music_playing, song_normal
 
 def open_webpage():
     webbrowser.open('https://www.iloveimg.com/ru/download/x8h9dqbywm31cbx11b2d8lnkk0rqkssbswzqq7k88qmybzf9jqp1Amn5ntbdgmfqrybrcApshbgg5dknb116xnAlfsj20srnsjqAnb5mj2fr2xpbym02qtApy7wb3b6315kq65x04kqfy5g1fx8sAsn1b1lkrl5jxk0b7ntmn05fdb2cqtzq/5')  
@@ -46,6 +46,7 @@ def start_backraund(button_sound):
     button_rect_exit = button.get_rect()
     button_rect_exit.center = (WIDTH // 2, 380)
 
+    normal_song = True
 
     log_text = font_bold.render("Start", True, (255, 255, 255)) 
     log_rect = log_text.get_rect()
@@ -70,11 +71,13 @@ def start_backraund(button_sound):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if 315 <= event.pos[0] <= 480 and 165 <= event.pos[1] <= 230:
                     button_sound.play()
-                    if music_playing % 2 == 1 or music_playing == 0:
+                    if song_image == song_on:
                         pygame.mixer.music.pause()
+                        normal_song = False
                     starting_fields()
-                    if music_playing % 2 == 1 or music_playing == 0:
-                        pygame.mixer.music.unpause()
+                    if song_image == song_on:
+                        normal_song = True
+                        song_normal()
                 if 315 <= event.pos[0] <= 480 and 260 <= event.pos[1] <= 320:
                     button_sound.play()
                     print("record")
@@ -85,11 +88,12 @@ def start_backraund(button_sound):
                 
                 if 25 <= event.pos[0] <= 95 and 505 <= event.pos[1] <= 570:
                     button_sound.play()
-                    off_on_song()
-                    if song_image == song_off:
+                    if song_image == song_off and not normal_song:
                         song_image = song_on
+                        song_normal()
                     else:
                         song_image = song_off
+                        off_on_song()
 
                 if 115 <= event.pos[0] <= 185 and 505 <= event.pos[1] <= 570:
                     button_sound.play()

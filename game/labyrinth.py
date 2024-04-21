@@ -45,13 +45,14 @@ def create_maze(grid, row, column):
             grid[new_row][new_col] = 0
             create_maze(grid, new_row, new_col)
 
-def has_black_neighbor(grid, row, col):
-    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-    for dr, dc in directions:
-        new_row = row + dr
-        new_col = col + dc
-        if 0 <= new_row < len(grid) and 0 <= new_col < len(grid[0]) and grid[new_row][new_col] == 1:
-            return True
+def has_black_start(grid, row, col):
+    if  grid[row][col+1] != 1:
+        return True
+    return False
+
+def has_black_end(grid, row, col):
+    if  grid[row][col-1] != 1:
+        return True
     return False
 
 def reset_game():
@@ -64,13 +65,13 @@ def reset_game():
 
     start_row = random.randint(1, len(grid) - 2)
     start_col = 0
-    while not has_black_neighbor(grid, start_row, start_col):
+    while not has_black_start(grid, start_row, start_col):
         start_row = random.randint(1, len(grid) - 2)
         start_col = 0
 
     end_row = random.randint(1, len(grid) - 2)
     end_col = len(grid[0]) - 1
-    while not has_black_neighbor(grid, end_row, end_col):
+    while not has_black_end(grid, end_row, end_col):
         end_row = random.randint(1, len(grid) - 2)
         end_col = len(grid[0]) - 1
 
@@ -116,7 +117,7 @@ def start_labyrinth():
 
     cont_text = font_bold.render("Continue", True, BLACK)
 
-    text_mess = "Нou must find the way to the exit and get \nout of the maze. There are coins here \nthat can add 10 seconds to your time or \nsubtract 10 seconds."
+    text_mess = "Here's the first challenge: you need to collect all the coins, only then will the doors leading to the next level open. I wish you good luck!"
 
     # Установка заголовка окна
     pygame.display.set_caption("Return to Present")
@@ -170,7 +171,7 @@ def start_labyrinth():
         if player_pos == [end_row, end_col]:
             start_game = False
             the_end_game = 1
-            text_mess = f"Congratulations! You have successfully \ncompleted the first stage in {timer//60} seconds. \nBut remember, this is just the beginning. \nDon't relax, even greater challenges await you!"
+            text_mess = f"Congratulations! You have successfully \ncompleted the first stage in {timer//60} seconds. \nBut remember, this is just the beginning. \nDon't relax, even greater challenges \nawait you!"
 
             
 

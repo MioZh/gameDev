@@ -21,8 +21,20 @@ def start_pacman():
     game_over = False
     win = False
     score = 0
-    
-    player = Player(32,128,"game/images_pacman/player.png")
+    time = 0
+    start_game = False
+
+    mess_backgraund = pygame.image.load('game/image/mess_game.png')
+    mess_backgraund = pygame.transform.scale(mess_backgraund, (800, 600))
+
+    font_bold = pygame.font.Font("game/fonts/press.ttf", 18)
+    font_bold_little = pygame.font.Font("game/fonts/press.ttf", 14)
+
+    cont_text = font_bold.render("Continue", True, BLACK)
+
+    text_mess = "You coped very well with the maze, but \nnow it's time for a new challenge. Will \nyou be able to collect all the coins \nwhile running away from enemies? This \nwill be a real test of your skills and \nreaction speed."
+
+    player = Player(32,128,"images_pacman/player.png")
     # Create the blocks that will set the paths where the player can go
     horizontal_blocks = pygame.sprite.Group()
     vertical_blocks = pygame.sprite.Group()
@@ -48,20 +60,26 @@ def start_pacman():
     enemies.add(Slime(448,64,-2,0))
     enemies.add(Slime(640,448,2,0))
     
-    game_over_sound = pygame.mixer.Sound("game/audio_pacman/game_over_sound.mp3")
-    win_sound = pygame.mixer.Sound("game/audio_pacman/win_sound.mp3")
+    game_over_sound = pygame.mixer.Sound("audio_pacman/game_over_sound.mp3")
+    win_sound = pygame.mixer.Sound("audio_pacman/win_sound.mp3")
 
-    # Win Screen
-    wintext = font.render("Congratulations! You finished the game!", True, BLACK)
-    wintextRect = wintext.get_rect()
-    wintextRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-    
+    the_end_game = 0
+
     while not game_over:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_over = True
                 exit()
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and not start_game:
+                if 530 <= event.pos[0] <= 675 and 395 <= event.pos [1] <= 420:
+                    if the_end_game == 1:
+                        start_game = False
+                        return True
+                    elif the_end_game == 2:
+                        return False
+                    else:
+                        start_game = True
+            elif event.type == pygame.KEYDOWN and start_game:
                 if event.key == pygame.K_RIGHT:
                     player.move_right()
                 elif event.key == pygame.K_LEFT:
@@ -71,7 +89,7 @@ def start_pacman():
                 elif event.key == pygame.K_DOWN:
                     player.move_down()
             
-            elif event.type == pygame.KEYUP:
+            elif event.type == pygame.KEYUP and start_game:
                 if event.key == pygame.K_RIGHT:
                     player.stop_move_right()
                 elif event.key == pygame.K_LEFT:
@@ -80,11 +98,15 @@ def start_pacman():
                     player.stop_move_up()
                 elif event.key == pygame.K_DOWN:
                     player.stop_move_down()
-        
-        player.update(horizontal_blocks, vertical_blocks)
+        if start_game:
+            player.update(horizontal_blocks, vertical_blocks)
+
         block_hit_list = pygame.sprite.spritecollide(player, dots, True)
-        if block_hit_list:
+        if block_hit_list :
             score += 1
+
+        if start_game:
+            time += 1
 
         if len(dots) == 0:
             win = True
@@ -92,11 +114,15 @@ def start_pacman():
         
         block_hit_list = pygame.sprite.spritecollide(player, enemies, True)
         if block_hit_list:
+            text_mess = f"Oh... failure! Now Tyler Chronos can't \nreturn to his time.Your efforts were \nmagnificent, but sometimes fate has its \nown plans.But don't worry, your \nadventures are just beginning."
             game_over_sound.play()
-            return False
+            start_game = False
+            the_end_game = 2
+
         
         game_over = player.game_over
-        enemies.update(horizontal_blocks, vertical_blocks)
+        if start_game:
+            enemies.update(horizontal_blocks, vertical_blocks)
         
         screen.fill(BLACK)
         horizontal_blocks.draw(screen)
@@ -105,14 +131,26 @@ def start_pacman():
         dots.draw(screen)
         enemies.draw(screen)
         screen.blit(player.image, player.rect)
-        text = font.render("Score: " + str(score), True, WHITE)
+        text = font_bold_little.render("Score: " + str(score), True, WHITE)
         screen.blit(text, [20, 20])
 
         if win:
-            return True
-            
+            start_game = False
+            text_mess = f"Wow! You completed the second \nstage successfully in {time//30} seconds. But \nthat is not all..."
+            the_end_game = 1
+
+        if not start_game:
+            screen.blit(mess_backgraund, (0, -25))
+            screen.blit(cont_text, (530, 400))
+            lines_gg = text_mess.split('\n')
+            posi_y = 180
+            for line in lines_gg:
+                gg_txt_block = font_bold_little.render(line, True, BLACK)
+                screen.blit(gg_txt_block, (130, posi_y))
+                posi_y +=20
         pygame.display.flip()
         clock.tick(30)
         
     time.sleep(2)
     pygame.quit()
+

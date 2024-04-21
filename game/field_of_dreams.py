@@ -13,6 +13,17 @@ def start_Field_of_Dreams():
     # Размеры экрана
     screen_width = 800
     screen_height = 600
+    music_file = "song/field_of_song.mp3"  # Путь к музыке
+    pygame.mixer.music.load(music_file)
+
+    correct = "song/yes_letter.mp3"
+    correct = pygame.mixer.Sound(correct)
+
+    wrong = "song/no_letter.mp3"
+    wrong = pygame.mixer.Sound(wrong)
+
+    exit_song = "song/exit_field.mp3"
+    exit_song = pygame.mixer.Sound(exit_song)
 
     # Цвета
     WHITE = (255, 255, 255)
@@ -124,7 +135,8 @@ def start_Field_of_Dreams():
                     elif quit_game == 2:
                         return False
                     else:
-                        start_game = True
+                        start_game = True       
+                        pygame.mixer.music.play(-1)
 
             elif event.type == pygame.KEYDOWN:
                 if event.key >= pygame.K_a and event.key <= pygame.K_z and cnt_word <= length+(16 - length) // 2 and start_game:
@@ -137,6 +149,7 @@ def start_Field_of_Dreams():
                     else:
                         list_letter.append(letter)
                         if check_letter(letter, word):
+                            correct.play()
                             edit_txt = f"Let's reveal the \nletter {letter.upper()}."
                             i = cnt_word
                             for let in quetion[2]:
@@ -145,15 +158,21 @@ def start_Field_of_Dreams():
                                 i += 1
                             word = remote_letter(letter, word)
                         elif attempt == 2:
+                            wrong.play()
                             attempt -= 1
                             edit_txt = "Sorry, but that \nletter is not in the \nword. You have one \nattempt left, use \nit wisely."
                         elif attempt > 2:
+                            wrong.play()
                             attempt -= 1
                             edit_txt = f"You didn't guess, \nyou have only {attempt} \nattempts left."
                         elif attempt == 1:
-                            edit_txt = f"You lost, the word was \n{word.upper()}."
+                            pygame.mixer.music.pause()
+                            exit_song.play()
+                            edit_txt = f"You lost, the word was \n{quetion[2].upper()}."
                             quit_game = 2
                     if not word:
+                        pygame.mixer.music.pause()
+                        exit_song.play()
                         edit_txt = "Congratulations, \nyou guessed \nthe word correctly!!"
                         quit_game = 1
                         
@@ -215,7 +234,7 @@ def start_Field_of_Dreams():
             time.sleep(3)
             start_game = False
         elif quit_game == 2 and start_game:
-            text_mess = "Don't get upset, it's just a game.You've \nput in a lot of effort, but sometimes \neven the best players make mistakes.Try \nagain and remember that every failure \nbrings you closer to the next victory!\nBelieve in yourself and don't give up!"
+            text_mess = ""
             time.sleep(3)
             start_game = False
     # Выход из Pygame

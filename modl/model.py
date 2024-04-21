@@ -14,6 +14,11 @@ def off_on_song():
     music_playing += 1
 
 
+def song_normal():
+    music_file = "song/music-backgraund_eISPYRiE.mp3"  # Путь к музыке
+    pygame.mixer.music.load(music_file)
+    pygame.mixer.music.play(-1)
+
 def check_password_and_login(username, password):
     if len(username) > 2 and len(password) > 5:
         letter_count = 0
@@ -35,7 +40,6 @@ def check_letter(letter, word):
 
 def remote_letter(letter, word):
     word = word.replace(letter, '')
-    print(word, letter)
     return word
 
 
